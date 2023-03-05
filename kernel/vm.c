@@ -432,6 +432,7 @@ copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
     return -1;
   }
 }
+/** 参考 void freewalk(pagetable_t pagetable) */
 
 void
 recurse_treepage(pagetable_t pagetable, int level)
@@ -463,3 +464,4 @@ vmprint(pagetable_t pagetable)
 	printf("page table %p\n", pagetable);
   recurse_treepage(pagetable, 0);
 }
+/** ==================================*/
