@@ -106,7 +106,11 @@ extern uint64 sys_write(void);
 extern uint64 sys_uptime(void);
 extern uint64 sys_trace(void);   // HERE
 extern uint64 sys_sysinfo(void);
-
+/**
+ * 函数指针数组
+ * SYS_fork 作为索引比如：
+ * syscalls[SYS_fork] = sys_fork
+ */
 static uint64 (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
 [SYS_exit]    sys_exit,
@@ -164,11 +168,14 @@ syscall(void)
 {
   int num;
   struct proc *p = myproc();
+  // 通过a7寄存器传递参数 
+  // li a7, SYS_trace	 将系统调用 id 存入 a7 寄存器
 
   num = p->trapframe->a7;
   // 如果系统调用编号有效
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
-    // 通过系统调用编号，获取系统调用处理函数的指针，调用并将返回值存到用户进程的 a0 寄存器中
+    // 通过系统调用编号，获取系统调用处理函数的指针
+    // 调用并将返回值存到用户进程的 a0 寄存器中
     p->trapframe->a0 = syscalls[num]();
     if((p->syscall_trace >> num) & 1) {
       // syscall_names[num]: 从 syscall 编号到 syscall 名的映射表
